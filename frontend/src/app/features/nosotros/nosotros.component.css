@@ -1,0 +1,324 @@
+:host {
+  display: block;
+}
+
+.body {
+  color: #3C4241;
+  background-color: #ffffff;
+  margin: 0;
+  padding: 0;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  line-height: 1.8;
+  overflow-x: hidden;
+}
+
+.container {
+  width: 90%;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 20px;
+}
+
+h1, h2, h3 {
+  color: #4a3b31;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+}
+
+/* ============= HERO SECTION ============= */
+.hero-section {
+  position: relative;
+  text-align: center;
+  color: #ffffff;
+  background: linear-gradient(135deg, rgba(60, 66, 65, 0.85) 0%, rgba(74, 59, 49, 0.75) 100%), 
+              url("../../../assets/fondo-nosotros.png") center center / cover no-repeat;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding: 40px 20px;
+  box-sizing: border-box;
+}
+
+.hero-section::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: radial-gradient(circle at center, transparent 0%, rgba(0,0,0,0.3) 100%);
+  pointer-events: none;
+}
+
+.hero-content {
+  position: relative;
+  z-index: 1;
+  animation: fadeInUp 1s ease-out;
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.hero-logo {
+  max-width: 200px;
+  margin-bottom: 30px;
+  filter: drop-shadow(0 8px 16px rgba(0, 0, 0, 0.4));
+  animation: float 3s ease-in-out infinite;
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-10px); }
+}
+
+.hero-content h1 {
+  color: #ffffff;
+  font-size: 4rem;
+  margin-bottom: 0.3em;
+  font-weight: 800;
+  text-shadow: 3px 3px 8px rgba(0, 0, 0, 0.5);
+  line-height: 1.2;
+}
+
+.hero-content p {
+  max-width: 700px;
+  margin: 0 auto 2.5em;
+  font-size: 1.5rem;
+  color: #ffffff;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.4);
+  font-weight: 300;
+}
+
+.btn {
+  display: inline-block;
+  padding: 16px 40px;
+  margin: 0.6em;
+  font-size: 1.1rem;
+  font-weight: 700;
+  text-decoration: none;
+  border-radius: 50px;
+  transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.25);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.btn-primary {
+  background: linear-gradient(135deg, #c0a062 0%, #d4b77a 100%);
+  color: #4a3b31;
+  border: 3px solid transparent;
+}
+
+.btn-primary:hover {
+  background: #ffffff;
+  color: #c0a062;
+  border-color: #c0a062;
+  transform: translateY(-4px) scale(1.05);
+  box-shadow: 0 10px 30px rgba(192, 160, 98, 0.4);
+}
+
+.btn-secondary {
+  background: transparent;
+  color: #ffffff;
+  border: 3px solid #ffffff;
+}
+
+.btn-secondary:hover {
+  background: #ffffff;
+  color: #3C4241;
+  transform: translateY(-4px) scale(1.05);
+  box-shadow: 0 10px 30px rgba(255, 255, 255, 0.3);
+}
+
+/* ============= CONTENT SECTIONS ============= */
+.content-section {
+  padding: 100px 0;
+  position: relative;
+}
+
+.content-section h2 {
+  text-align: center;
+  font-size: 3.2rem;
+  margin-bottom: 70px;
+  position: relative;
+  color: #4a3b31;
+}
+
+.content-section h2::before {
+  content: '';
+  position: absolute;
+  left: 50%;
+  bottom: -20px;
+  transform: translateX(-50%);
+  width: 100px;
+  height: 5px;
+  background: linear-gradient(90deg, transparent, #c0a062, transparent);
+  border-radius: 10px;
+}
+
+.content-section h2::after {
+  content: '';
+  position: absolute;
+  left: 50%;
+  bottom: -30px;
+  transform: translateX(-50%);
+  width: 30px;
+  height: 30px;
+  background: #c0a062;
+  border-radius: 50%;
+  box-shadow: 0 0 0 8px rgba(192, 160, 98, 0.2);
+}
+
+.section-layout {
+  display: flex;
+  align-items: center;
+  gap: 60px;
+  flex-wrap: wrap;
+}
+
+.section-layout .text-content {
+  flex: 1;
+  min-width: 320px;
+}
+
+.section-layout .text-content p {
+  color: #3C4241;
+  font-size: 1.15rem;
+  margin-bottom: 1.5em;
+  line-height: 1.9;
+  text-align: justify;
+}
+
+.section-layout .image-placeholder {
+  flex: 1;
+  min-width: 320px;
+  text-align: center;
+}
+
+.section-layout .image-placeholder img {
+  max-width: 100%;
+  height: auto;
+  border-radius: 20px;
+  box-shadow: 0 15px 40px rgba(0, 0, 0, 0.15);
+  transition: transform 0.4s ease;
+}
+
+.section-layout .image-placeholder img:hover {
+  transform: scale(1.05) rotate(1deg);
+}
+
+#historia .image-placeholder img {
+  width: 320px;
+  height: 320px;
+  object-fit: cover;
+  border-radius: 50%;
+  border: 10px solid #ffffff;
+  box-shadow: 0 0 0 15px #c0a062, 0 20px 50px rgba(0, 0, 0, 0.2);
+}
+
+#historia .image-placeholder img:hover {
+  transform: scale(1.08);
+  box-shadow: 0 0 0 15px #d4b77a, 0 25px 60px rgba(0, 0, 0, 0.3);
+}
+
+.image-placeholder .caption {
+  margin-top: 20px;
+  font-size: 0.95rem;
+  color: #777;
+  font-style: italic;
+  font-weight: 300;
+}
+
+/* ============= ALTERNATING BACKGROUNDS ============= */
+.alt-background {
+  background: linear-gradient(135deg, #f8f8f8 0%, #ffffff 100%);
+}
+
+.reverse-layout {
+  flex-direction: row-reverse;
+}
+
+/* ============= UBICACION SECTION ============= */
+#ubicacion {
+  background: linear-gradient(135deg, #3C4241 0%, #4a3b31 100%);
+  color: #ffffff;
+}
+
+#ubicacion h2 {
+  color: #ffffff;
+}
+
+#ubicacion h2::before {
+  background: linear-gradient(90deg, transparent, #c0a062, transparent);
+}
+
+#ubicacion .text-content p,
+#ubicacion address {
+  color: #ffffff;
+}
+
+#ubicacion address {
+  font-style: normal;
+  margin-bottom: 2em;
+  line-height: 2;
+  font-size: 1.1rem;
+}
+
+#ubicacion strong {
+  color: #c0a062;
+  font-size: 1.2rem;
+}
+
+.map-placeholder {
+  text-align: center;
+  margin-top: 20px;
+}
+
+.map-placeholder iframe {
+  border-radius: 20px;
+  box-shadow: 0 15px 40px rgba(0, 0, 0, 0.3);
+  border: 5px solid rgba(192, 160, 98, 0.3);
+}
+
+/* ============= RESPONSIVE DESIGN ============= */
+@media (max-width: 768px) {
+  .hero-content h1 {
+    font-size: 2.5rem;
+  }
+  
+  .hero-content p {
+    font-size: 1.2rem;
+  }
+  
+  .content-section h2 {
+    font-size: 2.3rem;
+  }
+  
+  .section-layout {
+    flex-direction: column;
+  }
+  
+  .reverse-layout {
+    flex-direction: column;
+  }
+  
+  .btn {
+    padding: 14px 30px;
+    font-size: 1rem;
+  }
+  
+  #historia .image-placeholder img {
+    width: 250px;
+    height: 250px;
+  }
+}

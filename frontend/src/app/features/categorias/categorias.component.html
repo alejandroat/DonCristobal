@@ -1,0 +1,15 @@
+<div class="home-page">
+    <header class="menu-header">
+        <h1>Nuestro Menú</h1>
+    </header>
+    <div class="menu-container">
+        <div class="card-content">
+            <div class="card" *ngFor="let categoria of categorias">
+                <img [src]="categoria.imagen" alt="{{ categoria.nombre }}" class="card-image">
+                <div class="card-body">
+                    <h2>{{ categoria.nombre }}</h2>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

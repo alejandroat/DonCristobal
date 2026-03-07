@@ -1,0 +1,126 @@
+<div class="modal-login" *ngIf="modalLoginAbierto">
+    <div class="modal-content">
+        <h2>Iniciar Sesión</h2>
+        <form (ngSubmit)="login()">
+            <label>Usuario:
+                <input type="text" [(ngModel)]="loginData.username" name="usuario" required autocomplete="username">
+            </label>
+            <label>Contraseña:
+                <input type="password" [(ngModel)]="loginData.password" name="contrasena" required
+                    autocomplete="current-password">
+            </label>
+            <div class="modal-actions">
+                <button type="submit" class="btn btn-primary">Entrar</button>
+            </div>
+            <div *ngIf="loginError" class="login-error">{{ loginError }}</div>
+        </form>
+    </div>
+    <div class="modal-backdrop"></div>
+</div>
+<div class="panel-container" *ngIf="!modalLoginAbierto">
+    <h1>Panel de Administración</h1>
+
+    <div class="panel-header">
+        <button (click)="mostrar = 'productos'" [class.active]="mostrar === 'productos'">Productos</button>
+        <button (click)="mostrar = 'categorias'" [class.active]="mostrar === 'categorias'">Categorías</button>
+        <button (click)="abrirModalCrear()">Agregar</button>
+    </div>
+
+    <div *ngIf="mostrar === 'productos'">
+        <table class="panel-table">
+            <thead>
+                <tr>
+                    <th>Nombre</th>
+                    <th>Precio</th>
+                    <th>Estado</th>
+                    <th>Categoria</th>
+                    <th>Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr *ngFor="let producto of productos">
+                    <td>{{ producto.nombre }}</td>
+                    <td>{{ producto.precio | currency:'COP':'symbol':'1.0-0':'es-CO' }}</td>
+                    <td>{{ producto.estado ? 'Activo' : 'Inactivo' }}</td>
+                    <td>{{ getNombreCategoria(producto.categoria_id) }}</td>
+                    <td>
+                        <button class="btn btn-edit" (click)="editarProducto(producto)">Editar</button>
+                        <button class="btn btn-activate" (click)="activarProducto(producto)">{{ producto.estado ? 'Desactivar' : 'Activar' }}</button>
+                        <button class="btn btn-delete" (click)="eliminarProducto(producto)">Eliminar</button>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <div *ngIf="mostrar === 'categorias'">
+        <table class="panel-table">
+            <thead>
+                <tr>
+                    <th>Nombre</th>
+                    <th>Estado</th>
+                    <th>Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr *ngFor="let categoria of categorias">
+                    <td>{{ categoria.nombre }}</td>
+                    <td>{{ categoria.estado ? 'Activo' : 'Inactivo' }}</td>
+                    <td>
+                        <button class="btn btn-edit" (click)="editarCategoria(categoria)">Editar</button>
+                        <button class="btn btn-activate" (click)="activarCategoria(categoria)">{{ categoria.estado ? 'Desactivar' : 'Activar' }}</button>
+                        <button class="btn btn-delete" (click)="eliminarCategoria(categoria)">Eliminar</button>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<div class="modal-crud" *ngIf="modalCrudAbierto">
+    <div class="modal-backdrop2" (click)="modalCrudAbierto = false"></div>
+
+    <div class="modal-content">
+        <h2>
+            {{ modoEdicion ? 'Editar' : 'Crear' }}
+            {{ tipoFormulario === 'producto' ? 'Producto' : 'Categoría' }}
+        </h2>
+
+        <form (ngSubmit)="guardar()">
+            <div *ngIf="tipoFormulario === 'producto'">
+                <label>Nombre:
+                    <input type="text" [(ngModel)]="formProducto.nombre" name="nombreProducto" required>
+                </label>
+                <label>Descripción:
+                    <textarea [(ngModel)]="formProducto.descripcion" name="descripcion"></textarea>
+                </label>
+                <label>Precio:
+                    <input type="number" [(ngModel)]="formProducto.precio" name="precio" required>
+                </label>
+                <label>Categoría:
+                    <select [(ngModel)]="formProducto.categoriaId" name="categoriaId" required>
+                        <option *ngFor="let cat of categorias" [value]="cat.id">{{ cat.nombre }}</option>
+                    </select>
+                </label>
+                <label>Imagen:
+                    <input type="file" (change)="onFileSelected($event, 'producto')">
+                </label>
+            </div>
+            <div *ngIf="tipoFormulario === 'categoria'">
+                <label>Nombre:
+                    <input type="text" [(ngModel)]="formCategoria.nombre" name="nombreCategoria" required>
+                </label>
+                <!-- <label>Estado:
+                    <input type="checkbox" [(ngModel)]="formCategoria.estado" name="estadoCategoria">
+                </label> -->
+                <label>Imagen:
+                    <input type="file" (change)="onFileSelected($event, 'categoria')">
+                </label>
+            </div>
+            <div class="modal-actions">
+                <button type="submit" class="btn btn-primary">{{ modoEdicion ? 'Actualizar' : 'Guardar' }}</button>
+                <button type="button" class="btn btn-cancel" (click)="modalCrudAbierto = false">Cancelar</button>
+            </div>
+        </form>
+    </div>
+</div>
