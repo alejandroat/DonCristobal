@@ -1,15 +1,40 @@
-const { Categoria } = require('../models');
+﻿const { Categoria } = require('../models');
 const multer = require('multer');
 const path = require('path');
 const fs = require('fs');
 
+// Canonical upload dir (independent from process CWD)
+const UPLOAD_DIR = path.join(__dirname, '../../uploads/categoria');
+
+// Legacy dirs (in case older runs saved files elsewhere)
+const LEGACY_UPLOAD_DIRS = [
+	path.join(__dirname, '../../uploads/categoria'),
+	path.join(__dirname, '../../uploads/categorias'),
+	path.join(__dirname, '../uploads/categorias'),
+	path.join(__dirname, '../uploads/categoria'),
+];
+
+function ensureDir(dirPath) {
+	if (!fs.existsSync(dirPath)) {
+		fs.mkdirSync(dirPath, { recursive: true });
+	}
+}
+
+function findImagePath(imagenUrl) {
+	if (!imagenUrl) return null;
+	const filename = path.basename(imagenUrl);
+	for (const dir of LEGACY_UPLOAD_DIRS) {
+		const candidate = path.join(dir, filename);
+		if (fs.existsSync(candidate)) return candidate;
+	}
+	return null;
+}
+
+ensureDir(UPLOAD_DIR);
+
 const storage = multer.diskStorage({
 	destination: function (req, file, cb) {
-		const uploadPath = 'uploads/categorias';
-		if (!fs.existsSync(uploadPath)) {
-			fs.mkdirSync(uploadPath, { recursive: true });
-		}
-		cb(null, uploadPath);
+		cb(null, UPLOAD_DIR);
 	},
 	filename: function (req, file, cb) {
 		const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
@@ -38,6 +63,7 @@ exports.createCategoria = async (req, res, next) => {
 	try {
 		const itemData = { ...req.body };
 		if (req.file) {
+			// Keep URL path consistent with the canonical upload folder.
 			itemData.imagenUrl = `/uploads/categoria/${req.file.filename}`;
 		}
 
@@ -90,9 +116,7 @@ exports.updateCategoria = async (req, res, next) => {
 		let oldImagePath = null;
 
 		if (req.file) {
-			if (item.imagenUrl) {
-				oldImagePath = path.join('uploads/categoria', path.basename(item.imagenUrl));
-			}
+			oldImagePath = findImagePath(item.imagenUrl);
 			itemData.imagenUrl = `/uploads/categoria/${req.file.filename}`;
 		}
 
@@ -124,13 +148,11 @@ exports.deleteCategoria = async (req, res, next) => {
 		const item = await Categoria.findByPk(req.params.id);
 		if (!item) return res.status(404).json({ message: 'Categoria no encontrada' });
 
-		if (item.imagenUrl) {
-			const imagePath = path.join('uploads/categoria', path.basename(item.imagenUrl));
-			if (fs.existsSync(imagePath)) {
-				fs.unlink(imagePath, (unlinkErr) => {
-					if (unlinkErr) console.error('Error al eliminar archivo:', unlinkErr);
-				});
-			}
+		const imagePath = findImagePath(item.imagenUrl);
+		if (imagePath && fs.existsSync(imagePath)) {
+			fs.unlink(imagePath, (unlinkErr) => {
+				if (unlinkErr) console.error('Error al eliminar archivo:', unlinkErr);
+			});
 		}
 
 		await item.destroy();
@@ -146,18 +168,37 @@ exports.deleteCategoria = async (req, res, next) => {
 exports.getCategoriaImage = async (req, res, next) => {
 	try {
 		const item = await Categoria.findByPk(req.params.id);
-		if (!item || !item.imagenUrl) {
-			return res.sendFile(path.join(__dirname, '../assets/default-category.png'));
+
+		const sendDefaultSvg = () => {
+			// Inline SVG placeholder so we don't depend on a bundled image file on disk.
+			const svg = `<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="512" height="512" viewBox="0 0 512 512">
+  <defs>
+    <linearGradient id="g" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#e9e2dd"/>
+      <stop offset="1" stop-color="#cdbfb6"/>
+    </linearGradient>
+  </defs>
+  <rect width="512" height="512" rx="36" fill="url(#g)"/>
+  <path d="M146 338c42-54 90-79 144-79s102 25 144 79" fill="none" stroke="#6b4b43" stroke-width="18" stroke-linecap="round"/>
+  <circle cx="206" cy="212" r="26" fill="#6b4b43"/>
+  <circle cx="306" cy="212" r="26" fill="#6b4b43"/>
+  <text x="50%" y="430" text-anchor="middle" font-family="Segoe UI, Arial, sans-serif" font-size="28" fill="#5a3f36" opacity="0.9">Sin imagen</text>
+</svg>`;
+			res.set('Content-Type', 'image/svg+xml');
+			return res.status(200).send(svg);
+		};
+
+		if (!item || !item.imagenUrl) return sendDefaultSvg();
+
+		const imagePath = findImagePath(item.imagenUrl);
+		if (imagePath) {
+			console.log(`Enviando imagen de categoria con id ${req.params.id}`);
+			return res.sendFile(imagePath);
 		}
 
-		const imagePath = path.join(__dirname, '../../uploads/categoria', path.basename(item.imagenUrl));
-		if (fs.existsSync(imagePath)) {
-			console.log(`Enviando imagen de categoria con id ${req.params.id}`);
-			res.sendFile(imagePath);
-		} else {
-			console.warn(`Imagen no encontrada para categoria con id ${req.params.id}, enviando imagen por defecto`);
-			res.sendFile(path.join(__dirname, '../assets/default-category.png'));
-		}
+		console.warn(`Imagen no encontrada para categoria con id ${req.params.id}, enviando imagen por defecto`);
+		return sendDefaultSvg();
 		
 	} catch (error) {
 		next(error);
@@ -166,3 +207,5 @@ exports.getCategoriaImage = async (req, res, next) => {
 }
 
 exports.uploadMiddleware = upload;
+
+

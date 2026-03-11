@@ -1,14 +1,16 @@
-<div class="home-page">
+﻿<div class="home-page">
     <header class="menu-header">
         <h1>Nuestro Menú</h1>
     </header>
     <div class="menu-container">
-        <div class="card-content">
-            <div class="card" *ngFor="let categoria of categorias">
-                <img [src]="categoria.imagen" alt="{{ categoria.nombre }}" class="card-image">
-                <div class="card-body">
-                    <h2>{{ categoria.nombre }}</h2>
-                </div>
+        <div class="card" *ngFor="let categoria of categoriasfiltradas">
+            <div class="card-overlay">
+                <h2>{{ categoria.nombre }}</h2>
+                <img
+                  [src]="categoria.imagenSrc || '/assets/logo.png'"
+                  alt="{{ categoria.nombre }}"
+                  class="categoria-img">
+                <button class="btn-ver">Ver más</button>
             </div>
         </div>
     </div>

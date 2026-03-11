@@ -1,40 +1,82 @@
-.home-page {
-  box-sizing: border-box;
-  background-image: url("../../../assets/fondo.png");
-  background-position: center;
-  background-repeat: no-repeat;
-  background-size: cover;
-  justify-content: center;
-  align-items: center;
-  min-height: 100vh;
-  margin: 0;
-  padding: 20px;
-  font-family: Segoe UI, Tahoma, Geneva, Verdana, sans-serif;
-  display: flex;
+﻿.home-page{
+  min-height:100vh;
+  background: url('/assets/fondo.png') center/cover no-repeat;
 }
 
-
 .menu-header {
-  color: #fff;
+  background: rgba(80,60,50,0.85);
+  padding: 10px 20px;
   text-align: center;
-  background-color: #4a3b31d9;
-  margin-bottom: 40px;
-  padding: 15px 20px 20px;
-  box-shadow: 0 4px 10px #0003;
 }
 
 .menu-header h1 {
-  margin: 0;
-  font-size: 2.8em;
+  color: white;
+  font-size: 40px;
   font-weight: 600;
 }
 
 .menu-container {
-  flex-wrap: wrap;
-  justify-content: center;
-  gap: 30px;
-  max-width: 1200px;
-  margin: 0 auto;
-  padding: 20px;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 40px;
+  padding: 60px 10%;
+}
+
+.card {
+  position: relative;
+  height: auto;
+  min-height: 320px;
+  border-radius: 20px;
+  background-size: cover;
+  background-position: center;
+  overflow: hidden;
   display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+  transition: transform .25s ease;
+}
+
+.card:hover {
+  transform: translateY(-5px);
+}
+
+.card-overlay {
+  background: rgba(255,255,255,0.92);
+  padding: 30px;
+  border-radius: 20px;
+  text-align: center;
+  width: 260px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.card-overlay h2 {
+  color: #5a3f36;
+  margin-bottom: 15px;
+}
+
+.btn-ver {
+  background: #6b4b43;
+  color: white;
+  border: none;
+  padding: 10px 22px;
+  border-radius: 25px;
+  cursor: pointer;
+  font-size: 15px;
+  transition: background .2s;
+}
+
+.btn-ver:hover {
+  background: #543a33;
+}
+
+.categoria-img {
+  width: 120px;
+  height: 120px;
+  object-fit: cover;
+  border-radius: 12px;
+  margin: 10px auto 20px;
+  display: block;
 }

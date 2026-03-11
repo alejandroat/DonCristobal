@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+﻿import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { environment } from '../../../environment/environments'
@@ -23,7 +23,7 @@ export class CategoriasService {
     return this.http.get(`${this.apiUrl}${this.appUrl}/obtener/${id}`);
   }
 
-  getCategoriaImagen(id: number): Observable<any> {
+  getCategoriaImagen(id: number): Observable<Blob> {
     return this.http.get(`${this.apiUrl}${this.appUrl}/imagen/${id}`, { responseType: 'blob' });
   }
 
@@ -40,3 +40,4 @@ export class CategoriasService {
   }
   
 }
+
