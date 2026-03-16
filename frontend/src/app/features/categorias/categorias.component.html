@@ -10,8 +10,9 @@
                   [src]="categoria.imagenSrc || '/assets/logo.png'"
                   alt="{{ categoria.nombre }}"
                   class="categoria-img">
-                <button class="btn-ver">Ver más</button>
+                <button class="btn-ver" (click)="verProductos(categoria.id)">Ver más</button>
             </div>
         </div>
     </div>
 </div>
+

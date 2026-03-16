@@ -1,16 +1,17 @@
-const express = require('express');
+﻿const express = require('express');
 const router = express.Router();
 const productoController = require('../controllers/producto.controller');
 const authMiddleware = require('../middleware/auth.middleware');
 
 
-// Protected routes — require valid JWT
+// Protected routes â€” require valid JWT
 // router.use(authMiddleware.verifyToken);
 const upload = productoController.uploadMiddleware
 
 
 // CRUD
 router.get('/obtener', productoController.getAll); // list
+router.get('/categoria/:categoriaId', productoController.getByCategoria); // list by category
 router.get('/obtener/:id', productoController.getById); // get by id
 router.get('/imagen/:id', productoController.getProductoImage); // get image
 router.post('/crear', authMiddleware.verifyToken ,upload.single('imagen'), productoController.createProducto); // create

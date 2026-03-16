@@ -1,15 +1,40 @@
-const { Producto } = require('../models');
+﻿const { Producto } = require('../models');
 const multer = require('multer');
 const path = require('path');
 const fs = require('fs');
 
+// Canonical upload dir (independent from process CWD)
+const UPLOAD_DIR = path.join(__dirname, '../../uploads/producto');
+
+// Legacy dirs (in case older runs saved files elsewhere)
+const LEGACY_UPLOAD_DIRS = [
+	path.join(__dirname, '../../uploads/producto'),
+	path.join(__dirname, '../../uploads/productos'),
+	path.join(__dirname, '../uploads/producto'),
+	path.join(__dirname, '../uploads/productos'),
+];
+
+function ensureDir(dirPath) {
+	if (!fs.existsSync(dirPath)) {
+		fs.mkdirSync(dirPath, { recursive: true });
+	}
+}
+
+function findImagePath(imagenUrl) {
+	if (!imagenUrl) return null;
+	const filename = path.basename(imagenUrl);
+	for (const dir of LEGACY_UPLOAD_DIRS) {
+		const candidate = path.join(dir, filename);
+		if (fs.existsSync(candidate)) return candidate;
+	}
+	return null;
+}
+
+ensureDir(UPLOAD_DIR);
+
 const storage = multer.diskStorage({
 	destination: function (req, file, cb) {
-		const uploadPath = 'uploads/productos';
-		if (!fs.existsSync(uploadPath)) {
-			fs.mkdirSync(uploadPath, { recursive: true });
-		}
-		cb(null, uploadPath);
+		cb(null, UPLOAD_DIR);
 	},
 	filename: function (req, file, cb) {
 		const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
@@ -36,8 +61,10 @@ exports.uploadImage = upload.single('imagen');
 
 exports.getAll = async (req, res, next) => {
 	try {
-		const productos = await Producto.findAll({ attributes: ['id', 'nombre', 'descripcion', 'precio', 'estado', 'imagenUrl', 'categoria_id', 'createdAt', 'updatedAt'], order: [['id', 'ASC']] });
-		console.log(productos);
+		const productos = await Producto.findAll({
+			attributes: ['id', 'nombre', 'descripcion', 'precio', 'estado', 'imagenUrl', 'categoriaId', 'createdAt', 'updatedAt'],
+			order: [['id', 'ASC']]
+		});
 		res.json(productos);
 	} catch (err) {
 		next(err);
@@ -45,20 +72,39 @@ exports.getAll = async (req, res, next) => {
 	}
 };
 
-
-exports.getById = async (req, res, next) => {
+exports.getByCategoria = async (req, res, next) => {
 	try {
-		const { id } = req.params;
-		const producto = await Producto.findByPk(id, { attributes: ['id', 'nombre', 'descripcion', 'precio', 'estado', 'imagenUrl', 'categoria_id'] });
-		if (!producto) return res.status(404).json({ message: 'Producto not found' });
-		console.log(producto);
-		res.json(producto);
+		const categoriaId = Number(req.params.categoriaId);
+		if (!Number.isFinite(categoriaId)) {
+			return res.status(400).json({ message: 'categoriaId inválido' });
+		}
+
+		const productos = await Producto.findAll({
+			where: { categoriaId },
+			attributes: ['id', 'nombre', 'descripcion', 'precio', 'estado', 'imagenUrl', 'categoriaId', 'createdAt', 'updatedAt'],
+			order: [['id', 'ASC']]
+		});
+
+		return res.json(productos);
 	} catch (err) {
 		next(err);
 		console.error(err);
 	}
 };
 
+exports.getById = async (req, res, next) => {
+	try {
+		const { id } = req.params;
+		const producto = await Producto.findByPk(id, {
+			attributes: ['id', 'nombre', 'descripcion', 'precio', 'estado', 'imagenUrl', 'categoriaId']
+		});
+		if (!producto) return res.status(404).json({ message: 'Producto no encontrado' });
+		res.json(producto);
+	} catch (err) {
+		next(err);
+		console.error(err);
+	}
+};
 
 exports.createProducto = async (req, res, next) => {
 	try {
@@ -69,7 +115,6 @@ exports.createProducto = async (req, res, next) => {
 
 		const item = await Producto.create(itemData);
 		res.status(201).json(item);
-		console.log(item);
 	} catch (err) {
 		if (req.file) {
 			fs.unlink(req.file.path, (unlinkErr) => {
@@ -84,25 +129,24 @@ exports.createProducto = async (req, res, next) => {
 exports.updateProducto = async (req, res, next) => {
 	try {
 		const item = await Producto.findByPk(req.params.id);
-		if (!item) return res.status(404).json({ message: 'Producto no encontrada' });
+		if (!item) return res.status(404).json({ message: 'Producto no encontrado' });
 
 		const itemData = { ...req.body };
 		let oldImagePath = null;
 
 		if (req.file) {
-			if (item.imagenUrl) {
-				oldImagePath = path.join('uploads/producto', path.basename(item.imagenUrl));
-			}
+			oldImagePath = findImagePath(item.imagenUrl);
 			itemData.imagenUrl = `/uploads/producto/${req.file.filename}`;
 		}
 
 		await item.update(itemData);
+
 		if (oldImagePath && fs.existsSync(oldImagePath)) {
 			fs.unlink(oldImagePath, (unlinkErr) => {
 				if (unlinkErr) console.error('Error al eliminar archivo antiguo:', unlinkErr);
 			});
 		}
-		console.log(item);
+
 		res.json(item);
 	} catch (err) {
 		if (req.file) {
@@ -115,24 +159,20 @@ exports.updateProducto = async (req, res, next) => {
 	}
 };
 
-
 exports.deleteProducto = async (req, res, next) => {
 	try {
 		const item = await Producto.findByPk(req.params.id);
 		if (!item) return res.status(404).json({ message: 'Producto no encontrado' });
 
-		if (item.imagenUrl) {
-			const imagePath = path.join('uploads/producto', path.basename(item.imagenUrl));
-			if (fs.existsSync(imagePath)) {
-				fs.unlink(imagePath, (unlinkErr) => {
-					if (unlinkErr) console.error('Error al eliminar archivo:', unlinkErr);
-				});
-			}
+		const imagePath = findImagePath(item.imagenUrl);
+		if (imagePath && fs.existsSync(imagePath)) {
+			fs.unlink(imagePath, (unlinkErr) => {
+				if (unlinkErr) console.error('Error al eliminar archivo:', unlinkErr);
+			});
 		}
-		console.log(`Producto con id ${req.params.id} eliminado`);
+
 		await item.destroy();
 		res.json({ message: 'Producto eliminado' });
-
 	} catch (err) {
 		next(err);
 		console.error(err);
@@ -142,19 +182,32 @@ exports.deleteProducto = async (req, res, next) => {
 exports.getProductoImage = async (req, res, next) => {
 	try {
 		const item = await Producto.findByPk(req.params.id);
-		if (!item || !item.imagenUrl) {
-			return res.sendFile(path.join(__dirname, '../assets/default-product.png'));
-		}
 
-		const imagePath = path.join(__dirname, '../../uploads/producto', path.basename(item.imagenUrl));
-		if (fs.existsSync(imagePath)) {
-			console.log(`Enviando imagen de producto con id ${req.params.id}`);
-			res.sendFile(imagePath);
-		} else {
-			console.log(`Imagen no encontrada para producto con id ${req.params.id}, enviando imagen por defecto`);
-			res.sendFile(path.join(__dirname, '../assets/default-product.png'));
-		}
-		
+		const sendDefaultSvg = () => {
+			const svg = `<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="512" height="512" viewBox="0 0 512 512">
+  <defs>
+    <linearGradient id="g" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#e9e2dd"/>
+      <stop offset="1" stop-color="#cdbfb6"/>
+    </linearGradient>
+  </defs>
+  <rect width="512" height="512" rx="36" fill="url(#g)"/>
+  <path d="M140 344c46-60 96-88 150-88s104 28 150 88" fill="none" stroke="#6b4b43" stroke-width="18" stroke-linecap="round"/>
+  <circle cx="206" cy="210" r="24" fill="#6b4b43"/>
+  <circle cx="306" cy="210" r="24" fill="#6b4b43"/>
+  <text x="50%" y="430" text-anchor="middle" font-family="Segoe UI, Arial, sans-serif" font-size="28" fill="#5a3f36" opacity="0.9">Sin imagen</text>
+</svg>`;
+			res.set('Content-Type', 'image/svg+xml');
+			return res.status(200).send(svg);
+		};
+
+		if (!item || !item.imagenUrl) return sendDefaultSvg();
+
+		const imagePath = findImagePath(item.imagenUrl);
+		if (imagePath) return res.sendFile(imagePath);
+
+		return sendDefaultSvg();
 	} catch (error) {
 		next(error);
 		console.error(error);

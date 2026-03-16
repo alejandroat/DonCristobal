@@ -82,4 +82,11 @@ export class CategoriasComponent implements OnInit, OnDestroy {
       }
     });
   }
+
+  verProductos(categoriaId: number) {
+    this.router.navigate(['/productos', categoriaId]);
+  }
 }
+
+
+
