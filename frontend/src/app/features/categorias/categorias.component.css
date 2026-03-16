@@ -5,7 +5,7 @@
 
 .menu-header {
   background: rgba(80,60,50,0.85);
-  padding: 10px 20px;
+  padding: 1px 10px;
   text-align: center;
 }
 
@@ -43,7 +43,7 @@
 
 .card-overlay {
   background: rgba(255,255,255,0.92);
-  padding: 30px;
+  padding: 20px;
   border-radius: 20px;
   text-align: center;
   width: 260px;
@@ -73,8 +73,8 @@
 }
 
 .categoria-img {
-  width: 120px;
-  height: 120px;
+  width: 220px;
+  height: 180px;
   object-fit: cover;
   border-radius: 12px;
   margin: 10px auto 20px;

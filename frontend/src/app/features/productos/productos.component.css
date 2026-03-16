@@ -1,0 +1,16 @@
+.home-page{
+  min-height:100vh;
+  background: url('/assets/fondo.png') center/cover no-repeat;
+}
+
+.menu-header {
+  background: rgba(80,60,50,0.85);
+  padding: 1px 10px;
+  text-align: center;
+}
+
+.menu-header h1 {
+  color: white;
+  font-size: 40px;
+  font-weight: 600;
+}
