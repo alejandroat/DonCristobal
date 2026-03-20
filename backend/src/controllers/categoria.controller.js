@@ -168,44 +168,19 @@ exports.deleteCategoria = async (req, res, next) => {
 exports.getCategoriaImage = async (req, res, next) => {
 	try {
 		const item = await Categoria.findByPk(req.params.id);
-
-		const sendDefaultSvg = () => {
-			// Inline SVG placeholder so we don't depend on a bundled image file on disk.
-			const svg = `<?xml version="1.0" encoding="UTF-8"?>
-<svg xmlns="http://www.w3.org/2000/svg" width="512" height="512" viewBox="0 0 512 512">
-  <defs>
-    <linearGradient id="g" x1="0" y1="0" x2="1" y2="1">
-      <stop offset="0" stop-color="#e9e2dd"/>
-      <stop offset="1" stop-color="#cdbfb6"/>
-    </linearGradient>
-  </defs>
-  <rect width="512" height="512" rx="36" fill="url(#g)"/>
-  <path d="M146 338c42-54 90-79 144-79s102 25 144 79" fill="none" stroke="#6b4b43" stroke-width="18" stroke-linecap="round"/>
-  <circle cx="206" cy="212" r="26" fill="#6b4b43"/>
-  <circle cx="306" cy="212" r="26" fill="#6b4b43"/>
-  <text x="50%" y="430" text-anchor="middle" font-family="Segoe UI, Arial, sans-serif" font-size="28" fill="#5a3f36" opacity="0.9">Sin imagen</text>
-</svg>`;
-			res.set('Content-Type', 'image/svg+xml');
-			return res.status(200).send(svg);
-		};
-
-		if (!item || !item.imagenUrl) return sendDefaultSvg();
+		if (!item || !item.imagenUrl) return res.status(404).end();
 
 		const imagePath = findImagePath(item.imagenUrl);
-		if (imagePath) {
-			console.log(`Enviando imagen de categoria con id ${req.params.id}`);
-			return res.sendFile(imagePath);
-		}
+		if (!imagePath) return res.status(404).end();
 
-		console.warn(`Imagen no encontrada para categoria con id ${req.params.id}, enviando imagen por defecto`);
-		return sendDefaultSvg();
-		
+		console.log(`Enviando imagen de categoria con id ${req.params.id}`);
+		return res.sendFile(imagePath);
 	} catch (error) {
 		next(error);
 		console.error(error);
 	}
 }
-
 exports.uploadMiddleware = upload;
+
 
 

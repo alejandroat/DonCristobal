@@ -81,15 +81,24 @@
   margin: 0 0 12px;
 }
 
-.producto-img {
+.img-slot {
   width: 140px;
   height: 140px;
-  object-fit: cover;
   border-radius: 12px;
   margin: 8px auto 14px;
-  display: block;
+  background: rgba(90,63,54,0.08);
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
+.producto-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
 .desc{
   color: #4a3a34;
   margin: 0 0 10px;
@@ -115,3 +124,4 @@
 .btn-ver:hover {
   background: #543a33;
 }
+

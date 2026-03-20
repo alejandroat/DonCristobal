@@ -72,11 +72,22 @@
   background: #543a33;
 }
 
-.categoria-img {
+.img-slot {
   width: 220px;
   height: 180px;
-  object-fit: cover;
   border-radius: 12px;
   margin: 10px auto 20px;
+  background: rgba(90,63,54,0.08);
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.categoria-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
   display: block;
 }
+

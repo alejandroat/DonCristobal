@@ -37,7 +37,6 @@ export class CategoriasComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
-    // Prevent memory leaks from blob URLs.
     for (const url of this.objectUrls) {
       try { URL.revokeObjectURL(url); } catch { /* ignore */ }
     }
@@ -54,9 +53,9 @@ export class CategoriasComponent implements OnInit, OnDestroy {
           estado: r.estado,
           imagenUrl: r.imagenUrl
         }));
+
         this.categoriasfiltradas = this.categorias.filter(c => c.estado === true);
 
-        // Load images via backend endpoint (blob -> object URL)
         for (const c of this.categoriasfiltradas) {
           this.cargarImagenCategoria(c);
         }
@@ -73,12 +72,18 @@ export class CategoriasComponent implements OnInit, OnDestroy {
   private cargarImagenCategoria(cat: CategoriaVM) {
     this.categoriasService.getCategoriaImagen(cat.id).subscribe({
       next: (blob) => {
+        // Backend returns an SVG placeholder when missing. We treat it as "no image".
+        if (blob.type === 'image/svg+xml') {
+          cat.imagenSrc = undefined;
+          return;
+        }
+
         const url = URL.createObjectURL(blob);
         this.objectUrls.push(url);
         cat.imagenSrc = url;
       },
       error: () => {
-        cat.imagenSrc = '/assets/logo.png';
+        cat.imagenSrc = undefined;
       }
     });
   }
@@ -87,6 +92,3 @@ export class CategoriasComponent implements OnInit, OnDestroy {
     this.router.navigate(['/productos', categoriaId]);
   }
 }
-
-
-

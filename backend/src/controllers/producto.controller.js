@@ -182,36 +182,17 @@ exports.deleteProducto = async (req, res, next) => {
 exports.getProductoImage = async (req, res, next) => {
 	try {
 		const item = await Producto.findByPk(req.params.id);
-
-		const sendDefaultSvg = () => {
-			const svg = `<?xml version="1.0" encoding="UTF-8"?>
-<svg xmlns="http://www.w3.org/2000/svg" width="512" height="512" viewBox="0 0 512 512">
-  <defs>
-    <linearGradient id="g" x1="0" y1="0" x2="1" y2="1">
-      <stop offset="0" stop-color="#e9e2dd"/>
-      <stop offset="1" stop-color="#cdbfb6"/>
-    </linearGradient>
-  </defs>
-  <rect width="512" height="512" rx="36" fill="url(#g)"/>
-  <path d="M140 344c46-60 96-88 150-88s104 28 150 88" fill="none" stroke="#6b4b43" stroke-width="18" stroke-linecap="round"/>
-  <circle cx="206" cy="210" r="24" fill="#6b4b43"/>
-  <circle cx="306" cy="210" r="24" fill="#6b4b43"/>
-  <text x="50%" y="430" text-anchor="middle" font-family="Segoe UI, Arial, sans-serif" font-size="28" fill="#5a3f36" opacity="0.9">Sin imagen</text>
-</svg>`;
-			res.set('Content-Type', 'image/svg+xml');
-			return res.status(200).send(svg);
-		};
-
-		if (!item || !item.imagenUrl) return sendDefaultSvg();
+		if (!item || !item.imagenUrl) return res.status(404).end();
 
 		const imagePath = findImagePath(item.imagenUrl);
-		if (imagePath) return res.sendFile(imagePath);
+		if (!imagePath) return res.status(404).end();
 
-		return sendDefaultSvg();
+		console.log(`Enviando imagen de producto con id ${req.params.id}`);
+		return res.sendFile(imagePath);
 	} catch (error) {
 		next(error);
 		console.error(error);
 	}
 }
-
 exports.uploadMiddleware = upload;
+

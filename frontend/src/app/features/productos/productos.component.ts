@@ -3,6 +3,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
 
 import { ProductosService } from '../../core/services/productos/productos.service';
+import { CategoriasService } from '../../core/services/categorias/categorias.service';
 
 type ProductoVM = {
   id: number;
@@ -24,6 +25,7 @@ type ProductoVM = {
 export class ProductosComponent implements OnInit, OnDestroy {
 
   categoriaId: number | null = null;
+  categoriaNombre: string | null = null;
 
   productos: ProductoVM[] = [];
   productosFiltrados: ProductoVM[] = [];
@@ -36,6 +38,7 @@ export class ProductosComponent implements OnInit, OnDestroy {
     private route: ActivatedRoute,
     private router: Router,
     private productosService: ProductosService,
+    private categoriasService: CategoriasService,
   ) {}
 
   ngOnInit(): void {
@@ -43,6 +46,7 @@ export class ProductosComponent implements OnInit, OnDestroy {
       const raw = pm.get('categoriaId');
       const id = raw ? Number(raw) : NaN;
       this.categoriaId = Number.isFinite(id) ? id : null;
+      this.cargarCategoriaNombre();
       this.cargarProductos();
     });
   }
@@ -56,6 +60,20 @@ export class ProductosComponent implements OnInit, OnDestroy {
 
   volverCategorias() {
     this.router.navigate(['/categoria']);
+  }
+
+  private cargarCategoriaNombre() {
+    this.categoriaNombre = null;
+    if (this.categoriaId === null) return;
+
+    this.categoriasService.getCategoriaById(this.categoriaId).subscribe({
+      next: (cat) => {
+        this.categoriaNombre = cat?.nombre ?? null;
+      },
+      error: () => {
+        this.categoriaNombre = null;
+      }
+    });
   }
 
   cargarProductos() {
@@ -75,7 +93,7 @@ export class ProductosComponent implements OnInit, OnDestroy {
           precio: Number(r.precio),
           estado: r.estado,
           imagenUrl: r.imagenUrl,
-          categoriaId: r.categoriaId ?? r.categoria_id ?? r.categoriaId
+          categoriaId: r.categoriaId ?? r.categoria_id
         }));
 
         this.productosFiltrados = this.productos.filter(p => p.estado === true);
@@ -96,12 +114,17 @@ export class ProductosComponent implements OnInit, OnDestroy {
   private cargarImagenProducto(prod: ProductoVM) {
     this.productosService.getProductoImagen(prod.id).subscribe({
       next: (blob) => {
+        if (blob.type === 'image/svg+xml') {
+          prod.imagenSrc = undefined;
+          return;
+        }
+
         const url = URL.createObjectURL(blob);
         this.objectUrls.push(url);
         prod.imagenSrc = url;
       },
       error: () => {
-        prod.imagenSrc = '/assets/logo.png';
+        prod.imagenSrc = undefined;
       }
     });
   }

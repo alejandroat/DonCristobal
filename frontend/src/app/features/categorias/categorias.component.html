@@ -6,13 +6,17 @@
         <div class="card" *ngFor="let categoria of categoriasfiltradas">
             <div class="card-overlay">
                 <h2>{{ categoria.nombre }}</h2>
-                <img
-                  [src]="categoria.imagenSrc || '/assets/logo.png'"
-                  alt="{{ categoria.nombre }}"
-                  class="categoria-img">
+
+                <div class="img-slot">
+                  <img
+                    *ngIf="categoria.imagenSrc"
+                    [src]="categoria.imagenSrc"
+                    alt="{{ categoria.nombre }}"
+                    class="categoria-img">
+                </div>
+
                 <button class="btn-ver" (click)="verProductos(categoria.id)">Ver más</button>
             </div>
         </div>
     </div>
 </div>
-
