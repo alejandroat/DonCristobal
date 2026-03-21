@@ -128,4 +128,10 @@ export class ProductosComponent implements OnInit, OnDestroy {
       }
     });
   }
+
+  volverInicio() {
+    this.router.navigate(['/']);
+  }
 }
+
+

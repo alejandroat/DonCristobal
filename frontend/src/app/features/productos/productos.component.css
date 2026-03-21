@@ -10,22 +10,16 @@
 }
 
 .header-row{
-  display: flex;
+  display: grid;
+  grid-template-columns: 44px 1fr auto;
   align-items: center;
-  justify-content: center;
-  gap: 16px;
+  gap: 12px;
 }
-
 .menu-header h1 {
   color: white;
   font-size: 40px;
   font-weight: 600;
   margin: 0;
-}
-
-.sub{
-  color: rgba(255,255,255,0.9);
-  margin: 6px 0 0;
 }
 
 .btn-volver{
@@ -53,6 +47,8 @@
   height: auto;
   min-height: 380px;
   border-radius: 20px;
+  background-size: cover;
+  background-position: center;
   overflow: hidden;
   display: flex;
   align-items: center;
@@ -67,10 +63,10 @@
 
 .card-overlay {
   background: rgba(255,255,255,0.92);
-  padding: 26px;
+  padding: 20px;
   border-radius: 20px;
   text-align: center;
-  width: 300px;
+  width: 260px;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -78,7 +74,7 @@
 
 .card-overlay h2 {
   color: #5a3f36;
-  margin: 0 0 12px;
+  margin: 0 0 15px;
 }
 
 .img-slot {
@@ -110,18 +106,25 @@
   margin: 0 0 14px;
 }
 
-.btn-ver {
-  background: #6b4b43;
-  color: white;
+.logo-btn{
+  width: 55px;
+  height: 55px;
   border: none;
-  padding: 10px 22px;
-  border-radius: 25px;
+  background: transparent;
+  padding: 0;
   cursor: pointer;
-  font-size: 15px;
-  transition: background .2s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
-.btn-ver:hover {
-  background: #543a33;
+.logo-img{
+  max-height: 50px;
+  width: auto;
+  display: block;
 }
 
+@media (max-width: 480px){
+  .menu-header h1{ font-size: 30px; }
+  .menu-container{ padding: 40px 6%; }
+}

@@ -5,7 +5,7 @@
 
 .menu-header {
   background: rgba(80,60,50,0.85);
-  padding: 1px 10px;
+  padding: 10px 20px;
   text-align: center;
 }
 
@@ -13,6 +13,7 @@
   color: white;
   font-size: 40px;
   font-weight: 600;
+  margin: 0;
 }
 
 .menu-container {
@@ -91,3 +92,38 @@
   display: block;
 }
 
+
+.header-row{
+  display: grid;
+  grid-template-columns: 44px 1fr auto;
+  align-items: center;
+  gap: 12px;
+}
+
+.logo-btn{
+  width: 55px;
+  height: 55px;
+  border: none;
+  background: transparent;
+  padding: 0;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.logo-img{
+  max-height: 50px;
+  width: auto;
+  display: block;
+}
+
+.header-spacer{
+  width: 44px;
+  height: 44px;
+}
+
+@media (max-width: 480px){
+  .menu-header h1{ font-size: 30px; }
+  .menu-container{ padding: 40px 6%; }
+}

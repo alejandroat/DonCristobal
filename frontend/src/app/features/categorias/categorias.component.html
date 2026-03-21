@@ -1,6 +1,12 @@
 ﻿<div class="home-page">
     <header class="menu-header">
-        <h1>Nuestro Menú</h1>
+        <div class="header-row">
+            <button class="logo-btn" type="button" (click)="volverInicio()" aria-label="Volver a inicio">
+                <img class="logo-img" src="/assets/logo-blanco.png" alt="Inicio">
+            </button>
+            <h1>Nuestro Menú</h1>
+            <div class="header-spacer"></div>
+        </div>
     </header>
     <div class="menu-container">
         <div class="card" *ngFor="let categoria of categoriasfiltradas">

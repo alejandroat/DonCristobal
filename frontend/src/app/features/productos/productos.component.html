@@ -1,10 +1,12 @@
 ﻿<div class="home-page">
   <header class="menu-header">
     <div class="header-row">
-      <h1>Productos</h1>
+      <button class="logo-btn" type="button" (click)="volverInicio()" aria-label="Volver a inicio">
+        <img class="logo-img" src="/assets/logo-blanco.png" alt="Inicio">
+      </button>
+      <h1 *ngIf="categoriaNombre">{{ categoriaNombre }}</h1>
       <button class="btn-volver" (click)="volverCategorias()">Volver</button>
     </div>
-    <p class="sub" *ngIf="categoriaNombre">{{ categoriaNombre }}</p>
   </header>
 
   <div class="menu-container">
@@ -23,7 +25,6 @@
         <p class="desc" *ngIf="producto.descripcion">{{ producto.descripcion }}</p>
         <p class="precio">{{ producto.precio | currency:'COP':'symbol-narrow':'1.0-0' }}</p>
 
-        <button class="btn-ver">Ver más</button>
       </div>
     </div>
   </div>
