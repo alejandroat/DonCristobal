@@ -1,4 +1,4 @@
-:host {
+﻿:host {
   display: block;
 }
 
@@ -288,10 +288,27 @@ h1, h2, h3 {
   border-radius: 20px;
   box-shadow: 0 15px 40px rgba(0, 0, 0, 0.3);
   border: 5px solid rgba(192, 160, 98, 0.3);
+  width: 100%;
+  max-width: 700px;
+  height: auto;
+  aspect-ratio: 16 / 10;
+  display: block;
+  margin: 0 auto;
 }
+
 
 /* ============= RESPONSIVE DESIGN ============= */
 @media (max-width: 768px) {
+  .section-layout .text-content,
+  .section-layout .image-placeholder {
+    min-width: 0;
+    width: 100%;
+  }
+
+  .map-placeholder iframe {
+    max-width: 100%;
+  }
+
   .hero-content h1 {
     font-size: 2.5rem;
   }
@@ -322,3 +339,4 @@ h1, h2, h3 {
     height: 250px;
   }
 }
+

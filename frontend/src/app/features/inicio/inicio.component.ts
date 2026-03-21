@@ -22,4 +22,8 @@ export class InicioComponent {
     this.router.navigate(['/nosotros']);
   }
 
+  domicilios() {
+    window.open('https://wa.me/573225628345?text=Hola%20quiero%20hacer%20un%20pedido', '_blank');
+  }
+
 }

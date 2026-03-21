@@ -42,7 +42,7 @@
                     <td>{{ producto.nombre }}</td>
                     <td>{{ producto.precio | currency:'COP':'symbol':'1.0-0':'es-CO' }}</td>
                     <td>{{ producto.estado ? 'Activo' : 'Inactivo' }}</td>
-                    <td>{{ getNombreCategoria(producto.categoria_id) }}</td>
+                    <td>{{ getNombreCategoria(producto.categoriaId) }}</td>
                     <td>
                         <button class="btn btn-edit" (click)="editarProducto(producto)">Editar</button>
                         <button class="btn btn-activate" (click)="activarProducto(producto)">{{ producto.estado ? 'Desactivar' : 'Activar' }}</button>

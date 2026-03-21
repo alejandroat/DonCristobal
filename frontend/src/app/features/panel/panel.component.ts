@@ -19,7 +19,7 @@ import { PLATFORM_ID, inject } from '@angular/core';
 export class PanelComponent implements OnInit {
   private platformId = inject(PLATFORM_ID);
   mostrar: 'productos' | 'categorias' = 'productos';
-  productos: Array<{ id: number, nombre: string,estado: boolean, precio: number, categoria_id: string }> = [];
+  productos: Array<{ id: number, nombre: string,estado: boolean, precio: number, categoriaId: string , descripcion: string }> = [];
   categorias: Array<{ id: number, nombre: string, estado: boolean, imagenUrl: string }> = [];
   usuario: Array<{ id: number, username: string, contrasena: string }> = [];
   loadingProductos: boolean = false;
@@ -107,7 +107,8 @@ export class PanelComponent implements OnInit {
           nombre: r.nombre,
           precio: r.precio,
           estado: r.estado,
-          categoria_id: r.categoria_id
+          categoriaId: r.categoriaId,
+          descripcion: r.descripcion || ''
         }));
         this.loadingProductos = false;
         console.log(this.productos);
