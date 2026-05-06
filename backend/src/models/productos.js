@@ -1,6 +1,4 @@
-const categoria = require("/Users/aleja/OneDrive/Documentos/Empresa/carta/backend/src/models/categoria");
-
-module.exports = (sequelize, DataTypes) => {
+﻿module.exports = (sequelize, DataTypes) => {
     const Producto = sequelize.define('Producto', {
         id: {
             type: DataTypes.INTEGER,
