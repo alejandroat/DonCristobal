@@ -132,11 +132,17 @@ exports.updateProducto = async (req, res, next) => {
 		if (!item) return res.status(404).json({ message: 'Producto no encontrado' });
 
 		const itemData = { ...req.body };
+		const removeImagen = itemData.removeImagen === true || itemData.removeImagen === 'true' || itemData.removeImagen === '1';
+		delete itemData.removeImagen;
+
 		let oldImagePath = null;
 
 		if (req.file) {
 			oldImagePath = findImagePath(item.imagenUrl);
 			itemData.imagenUrl = `/uploads/producto/${req.file.filename}`;
+		} else if (removeImagen) {
+			oldImagePath = findImagePath(item.imagenUrl);
+			itemData.imagenUrl = null;
 		}
 
 		await item.update(itemData);

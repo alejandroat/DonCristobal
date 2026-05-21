@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+﻿import { Component, OnInit } from '@angular/core';
 import { ProductosService } from '../../core/services/productos/productos.service';
 import { CategoriasService } from '../../core/services/categorias/categorias.service';
 import { UserService } from '../../core/services/user/user.service';
@@ -19,7 +19,7 @@ import { PLATFORM_ID, inject } from '@angular/core';
 export class PanelComponent implements OnInit {
   private platformId = inject(PLATFORM_ID);
   mostrar: 'productos' | 'categorias' = 'productos';
-  productos: Array<{ id: number, nombre: string,estado: boolean, precio: number, categoriaId: string , descripcion: string }> = [];
+  productos: Array<{ id: number, nombre: string, estado: boolean, precio: number, categoriaId: number | null, descripcion: string, imagenUrl?: string | null }> = [];
   categorias: Array<{ id: number, nombre: string, estado: boolean, imagenUrl: string }> = [];
   usuario: Array<{ id: number, username: string, contrasena: string }> = [];
   loadingProductos: boolean = false;
@@ -39,14 +39,16 @@ export class PanelComponent implements OnInit {
     precio: 0,
     estado: true,
     categoriaId: null as number | null,
-    imagen: null as File | null
+    imagen: null as File | null,
+    removeImagen: false
   };
 
   formCategoria = {
     id: null as number | null,
     nombre: '',
     estado: true,
-    imagen: null as File | null
+    imagen: null as File | null,
+    removeImagen: false
   };
 
   // Login
@@ -93,7 +95,7 @@ export class PanelComponent implements OnInit {
         }
       },
       error: (err) => {
-        this.loginError = err?.error?.message || 'Usuario o contraseña incorrectos';
+        this.loginError = err?.error?.message || 'Usuario o contraseÃ±a incorrectos';
       }
     });
   }
@@ -107,8 +109,9 @@ export class PanelComponent implements OnInit {
           nombre: r.nombre,
           precio: r.precio,
           estado: r.estado,
-          categoriaId: r.categoriaId,
-          descripcion: r.descripcion || ''
+          categoriaId: (r.categoriaId ?? r.categoria_id ?? null),
+          descripcion: r.descripcion || '',
+          imagenUrl: (r.imagenUrl ?? null)
         }));
         this.loadingProductos = false;
         console.log(this.productos);
@@ -122,7 +125,8 @@ export class PanelComponent implements OnInit {
     });
   }
 
-  getNombreCategoria(id: string): string {
+  getNombreCategoria(id: number | string | null | undefined): string {
+    if (id === null || id === undefined || id === '') return '';
     const cat = this.categorias.find(c => c.id === Number(id));
     return cat ? cat.nombre : '';
   }
@@ -140,7 +144,7 @@ export class PanelComponent implements OnInit {
         this.loadingCategorias = false;
       },
       error: (err) => {
-        this.error = 'Error al cargar las categorías';
+        this.error = 'Error al cargar las categorÃ­as';
         this.loadingCategorias = false;
       }
     });
@@ -163,7 +167,8 @@ export class PanelComponent implements OnInit {
       precio: producto.precio,
       estado: producto.estado,
       categoriaId: producto.categoriaId,
-      imagen: null
+      imagen: null,
+      removeImagen: false
     };
     this.modalCrudAbierto = true;
   }
@@ -175,7 +180,8 @@ export class PanelComponent implements OnInit {
       id: categoria.id,
       nombre: categoria.nombre,
       estado: categoria.estado,
-      imagen: null
+      imagen: null,
+      removeImagen: false
     };
     this.modalCrudAbierto = true;
   }
@@ -188,13 +194,15 @@ export class PanelComponent implements OnInit {
       precio: 0,
       estado: true,
       categoriaId: null,
-      imagen: null
+      imagen: null,
+      removeImagen: false
     };
     this.formCategoria = {
       id: null,
       nombre: '',
       estado: true,
-      imagen: null
+      imagen: null,
+      removeImagen: false
     };
   }
 
@@ -204,8 +212,10 @@ export class PanelComponent implements OnInit {
 
     if (tipo === 'producto') {
       this.formProducto.imagen = file;
+      this.formProducto.removeImagen = false;
     } else {
       this.formCategoria.imagen = file;
+      this.formCategoria.removeImagen = false;
     }
   }
 
@@ -220,6 +230,9 @@ export class PanelComponent implements OnInit {
 
       if (this.formProducto.imagen) {
         formData.append('imagen', this.formProducto.imagen);
+      }
+      if (this.formProducto.removeImagen) {
+        formData.append('removeImagen', 'true');
       }
 
       if (this.modoEdicion && this.formProducto.id) {
@@ -242,6 +255,9 @@ export class PanelComponent implements OnInit {
 
       if (this.formCategoria.imagen) {
         formData.append('imagen', this.formCategoria.imagen);
+      }
+      if (this.formCategoria.removeImagen) {
+        formData.append('removeImagen', 'true');
       }
 
       if (this.modoEdicion && this.formCategoria.id) {
@@ -279,3 +295,5 @@ export class PanelComponent implements OnInit {
 
 
 }
+
+

@@ -1,11 +1,11 @@
-<div class="modal-login" *ngIf="modalLoginAbierto">
+﻿<div class="modal-login" *ngIf="modalLoginAbierto">
     <div class="modal-content">
-        <h2>Iniciar Sesión</h2>
+        <h2>Iniciar SesiÃ³n</h2>
         <form (ngSubmit)="login()">
             <label>Usuario:
                 <input type="text" [(ngModel)]="loginData.username" name="usuario" required autocomplete="username">
             </label>
-            <label>Contraseña:
+            <label>ContraseÃ±a:
                 <input type="password" [(ngModel)]="loginData.password" name="contrasena" required
                     autocomplete="current-password">
             </label>
@@ -18,11 +18,11 @@
     <div class="modal-backdrop"></div>
 </div>
 <div class="panel-container" *ngIf="!modalLoginAbierto">
-    <h1>Panel de Administración</h1>
+    <h1>Panel de AdministraciÃ³n</h1>
 
     <div class="panel-header">
         <button (click)="mostrar = 'productos'" [class.active]="mostrar === 'productos'">Productos</button>
-        <button (click)="mostrar = 'categorias'" [class.active]="mostrar === 'categorias'">Categorías</button>
+        <button (click)="mostrar = 'categorias'" [class.active]="mostrar === 'categorias'">CategorÃ­as</button>
         <button (click)="abrirModalCrear()">Agregar</button>
     </div>
 
@@ -83,7 +83,7 @@
     <div class="modal-content">
         <h2>
             {{ modoEdicion ? 'Editar' : 'Crear' }}
-            {{ tipoFormulario === 'producto' ? 'Producto' : 'Categoría' }}
+            {{ tipoFormulario === 'producto' ? 'Producto' : 'CategorÃ­a' }}
         </h2>
 
         <form (ngSubmit)="guardar()">
@@ -91,19 +91,23 @@
                 <label>Nombre:
                     <input type="text" [(ngModel)]="formProducto.nombre" name="nombreProducto" required>
                 </label>
-                <label>Descripción:
+                <label>DescripciÃ³n:
                     <textarea [(ngModel)]="formProducto.descripcion" name="descripcion"></textarea>
                 </label>
                 <label>Precio:
                     <input type="number" [(ngModel)]="formProducto.precio" name="precio" required>
                 </label>
-                <label>Categoría:
+                <label>CategorÃ­a:
                     <select [(ngModel)]="formProducto.categoriaId" name="categoriaId" required>
                         <option *ngFor="let cat of categorias" [value]="cat.id">{{ cat.nombre }}</option>
                     </select>
                 </label>
                 <label>Imagen:
                     <input type="file" (change)="onFileSelected($event, 'producto')">
+                </label>
+                <label *ngIf="modoEdicion" class="remove-img">
+                    <input type="checkbox" [(ngModel)]="formProducto.removeImagen" name="removeImagenProducto">
+                    Quitar imagen actual
                 </label>
             </div>
             <div *ngIf="tipoFormulario === 'categoria'">
@@ -116,6 +120,10 @@
                 <label>Imagen:
                     <input type="file" (change)="onFileSelected($event, 'categoria')">
                 </label>
+                <label *ngIf="modoEdicion" class="remove-img">
+                    <input type="checkbox" [(ngModel)]="formCategoria.removeImagen" name="removeImagenCategoria">
+                    Quitar imagen actual
+                </label>
             </div>
             <div class="modal-actions">
                 <button type="submit" class="btn btn-primary">{{ modoEdicion ? 'Actualizar' : 'Guardar' }}</button>
@@ -124,3 +132,4 @@
         </form>
     </div>
 </div>
+
