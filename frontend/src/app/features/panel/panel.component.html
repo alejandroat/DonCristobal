@@ -1,11 +1,11 @@
 ﻿<div class="modal-login" *ngIf="modalLoginAbierto">
     <div class="modal-content">
-        <h2>Iniciar SesiÃ³n</h2>
+        <h2>Iniciar Sesión</h2>
         <form (ngSubmit)="login()">
             <label>Usuario:
                 <input type="text" [(ngModel)]="loginData.username" name="usuario" required autocomplete="username">
             </label>
-            <label>ContraseÃ±a:
+            <label>Contraseña:
                 <input type="password" [(ngModel)]="loginData.password" name="contrasena" required
                     autocomplete="current-password">
             </label>
@@ -18,27 +18,53 @@
     <div class="modal-backdrop"></div>
 </div>
 <div class="panel-container" *ngIf="!modalLoginAbierto">
-    <h1>Panel de AdministraciÃ³n</h1>
+    <h1>Panel de Administración</h1>
 
     <div class="panel-header">
         <button (click)="mostrar = 'productos'" [class.active]="mostrar === 'productos'">Productos</button>
-        <button (click)="mostrar = 'categorias'" [class.active]="mostrar === 'categorias'">CategorÃ­as</button>
+        <button (click)="mostrar = 'categorias'" [class.active]="mostrar === 'categorias'">Categorías</button>
         <button (click)="abrirModalCrear()">Agregar</button>
     </div>
 
     <div *ngIf="mostrar === 'productos'">
+
+        <div class="filters-con">
+            <div class="filters-group">
+                <label for="filtroNombre">Buscar por nombre:</label>
+                <input
+                    id="filtroNombre"
+                    type="text"
+                    [(ngModel)]="filtroNombre"
+                    (input)="aplicarFiltrosProductos()"
+                    placeholder="Ej: latte, pastel..."
+                >
+            </div>
+            <div class="filters-group">
+                <label for="filtroCategoria">Filtrar por categoría:</label>
+                <select
+                    id="filtroCategoria"
+                    [(ngModel)]="filtroCategoria"
+                    (change)="aplicarFiltrosProductos()">
+                    <option [ngValue]="null">Todas</option>
+                    <option *ngFor="let cat of categorias" [ngValue]="cat.id">{{ cat.nombre }}</option>
+                </select>
+            </div>
+            <div class="filters-actions">
+                <button type="button" class="btn btn-secondary" (click)="limpiarFiltrosProductos()">Limpiar</button>
+            </div>
+        </div>
         <table class="panel-table">
             <thead>
                 <tr>
                     <th>Nombre</th>
                     <th>Precio</th>
                     <th>Estado</th>
-                    <th>Categoria</th>
+                    <th>Categoría</th>
                     <th>Acciones</th>
                 </tr>
             </thead>
             <tbody>
-                <tr *ngFor="let producto of productos">
+                <tr *ngFor="let producto of productosFiltrados">
                     <td>{{ producto.nombre }}</td>
                     <td>{{ producto.precio | currency:'COP':'symbol':'1.0-0':'es-CO' }}</td>
                     <td>{{ producto.estado ? 'Activo' : 'Inactivo' }}</td>
@@ -83,7 +109,7 @@
     <div class="modal-content">
         <h2>
             {{ modoEdicion ? 'Editar' : 'Crear' }}
-            {{ tipoFormulario === 'producto' ? 'Producto' : 'CategorÃ­a' }}
+            {{ tipoFormulario === 'producto' ? 'Producto' : 'Categoría' }}
         </h2>
 
         <form (ngSubmit)="guardar()">
@@ -91,13 +117,13 @@
                 <label>Nombre:
                     <input type="text" [(ngModel)]="formProducto.nombre" name="nombreProducto" required>
                 </label>
-                <label>DescripciÃ³n:
+                <label>Descripción:
                     <textarea [(ngModel)]="formProducto.descripcion" name="descripcion"></textarea>
                 </label>
                 <label>Precio:
                     <input type="number" [(ngModel)]="formProducto.precio" name="precio" required>
                 </label>
-                <label>CategorÃ­a:
+                <label>Categoría:
                     <select [(ngModel)]="formProducto.categoriaId" name="categoriaId" required>
                         <option *ngFor="let cat of categorias" [value]="cat.id">{{ cat.nombre }}</option>
                     </select>

@@ -20,6 +20,7 @@ export class PanelComponent implements OnInit {
   private platformId = inject(PLATFORM_ID);
   mostrar: 'productos' | 'categorias' = 'productos';
   productos: Array<{ id: number, nombre: string, estado: boolean, precio: number, categoriaId: number | null, descripcion: string, imagenUrl?: string | null }> = [];
+  productosFiltrados: Array<{ id: number, nombre: string, estado: boolean, precio: number, categoriaId: number | null, descripcion: string, imagenUrl?: string | null }> = [];
   categorias: Array<{ id: number, nombre: string, estado: boolean, imagenUrl: string }> = [];
   usuario: Array<{ id: number, username: string, contrasena: string }> = [];
   loadingProductos: boolean = false;
@@ -31,6 +32,8 @@ export class PanelComponent implements OnInit {
   modoEdicion = false;
 
   tipoFormulario: 'producto' | 'categoria' = 'producto';
+  filtroNombre = '';
+  filtroCategoria: number | null = null;
 
   formProducto = {
     id: null as number | null,
@@ -79,6 +82,8 @@ export class PanelComponent implements OnInit {
     this.cargarProductos();
   }
 
+  filtroCategorias: number | null = null;
+
   login() {
     this.loginError = null;
     this.userService.login(this.loginData.username, this.loginData.password).subscribe({
@@ -113,6 +118,7 @@ export class PanelComponent implements OnInit {
           descripcion: r.descripcion || '',
           imagenUrl: (r.imagenUrl ?? null)
         }));
+        this.aplicarFiltrosProductos();
         this.loadingProductos = false;
         console.log(this.productos);
 
@@ -131,6 +137,19 @@ export class PanelComponent implements OnInit {
     return cat ? cat.nombre : '';
   }
 
+  aplicarFiltrosProductos() {
+    const nombre = this.filtroNombre.trim().toLowerCase();
+    const categoriaId = this.filtroCategoria === null || this.filtroCategoria === undefined || this.filtroCategoria === ('' as any)
+      ? null
+      : Number(this.filtroCategoria);
+
+    this.productosFiltrados = this.productos.filter((producto) => {
+      const coincideNombre = !nombre || producto.nombre.toLowerCase().includes(nombre);
+      const coincideCategoria = categoriaId === null || Number(producto.categoriaId) === categoriaId;
+      return coincideNombre && coincideCategoria;
+    });
+  }
+
   cargarCategorias() {
     this.loadingCategorias = true;
     this.categoriasService.getCategorias().subscribe({
@@ -141,6 +160,7 @@ export class PanelComponent implements OnInit {
           estado: r.estado,
           imagenUrl: r.imagenUrl
         }));
+        this.aplicarFiltrosProductos();
         this.loadingCategorias = false;
       },
       error: (err) => {
@@ -148,6 +168,12 @@ export class PanelComponent implements OnInit {
         this.loadingCategorias = false;
       }
     });
+  }
+
+  limpiarFiltrosProductos() {
+    this.filtroNombre = '';
+    this.filtroCategoria = null;
+    this.aplicarFiltrosProductos();
   }
 
   abrirModalCrear() {
